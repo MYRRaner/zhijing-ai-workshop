@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: zhijing-ai-workshop
+    runtime: python
+    buildCommand: bash build.sh
+    startCommand: gunicorn zhiJing.wsgi:application --bind 0.0.0.0:$PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11.0"
+      - key: DJANGO_SETTINGS_MODULE
+        value: "zhiJing.settings"
+      - key: AI_SERVICE_URL
+        value: "internal"
+      - key: ZHIPU_API_KEY
+        sync: false
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "False"
+      - key: WEB_CONCURRENCY
+        value: "4"

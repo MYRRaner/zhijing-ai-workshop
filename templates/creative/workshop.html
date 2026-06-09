@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+
+{% block title %}创意工坊 - 智境·AI{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <h1><i class="bi bi-gear-wide-connected"></i> 创意工坊</h1>
+        <p>组合多种AI能力，激发无限创意</p>
+    </div>
+</div>
+<div class="container ai-page">
+    <div class="row g-4">
+        <div class="col-lg-5">
+            <div class="ai-card">
+                <h2><i class="bi bi-sliders"></i> 创作模式</h2>
+                <form method="post" enctype="multipart/form-data" id="workshopForm">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">选择模式</label>
+                        <div class="style-selector">
+                            <input type="radio" name="mode" value="image_to_text" class="btn-check" id="mode-itt" checked onchange="toggleMode(this.value)">
+                            <label class="btn btn-outline-primary btn-sm" for="mode-itt">图片→文字</label>
+                            <input type="radio" name="mode" value="text_to_image" class="btn-check" id="mode-tti" onchange="toggleMode(this.value)">
+                            <label class="btn btn-outline-primary btn-sm" for="mode-tti">文字→图片</label>
+                        </div>
+                    </div>
+                    <div id="imageMode">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">上传图片</label>
+                            <input type="file" name="image" class="form-control" accept="image/*">
+                            <div class="form-text">AI将分析图片内容，然后根据内容创作文字</div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">创意提示</label>
+                        <textarea name="prompt" class="form-control" rows="3" placeholder="输入你的创意提示或要求..."></textarea>
+                    </div>
+                    <div id="imageStyleSelect" class="mb-3 d-none">
+                        <label class="form-label fw-bold">绘画风格</label>
+                        <select name="style" class="form-select">
+                            <option value="anime">动漫</option>
+                            <option value="realistic">写实</option>
+                            <option value="watercolor">水彩</option>
+                            <option value="oil">油画</option>
+                            <option value="cyberpunk">赛博朋克</option>
+                            <option value="chinese">国画</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-ai w-100 py-2">
+                        <i class="bi bi-stars"></i> 开始创作
+                    </button>
+                </form>
+            </div>
+        </div>
+        <div class="col-lg-7">
+            {% if result %}
+            {% if result.success %}
+            <div class="ai-card">
+                <h2><i class="bi bi-trophy"></i> 创作结果
+                    {% if result.mock %}
+                    <span class="badge bg-warning text-dark ms-2">演示模式</span>
+                    {% endif %}
+                </h2>
+                {% if result.cv_data %}
+                <div class="result-card mb-3">
+                    <h6 class="fw-bold"><i class="bi bi-eye"></i> 图像分析</h6>
+                    <p>{{ result.cv_data.description }}</p>
+                </div>
+                {% endif %}
+                {% if result.enhanced_prompt %}
+                <div class="result-card mb-3">
+                    <h6 class="fw-bold"><i class="bi bi-translate"></i> 增强提示词</h6>
+                    <p class="small">{{ result.enhanced_prompt }}</p>
+                </div>
+                {% endif %}
+                {% if result.content %}
+                <div class="result-card mb-3">
+                    <h6 class="fw-bold"><i class="bi bi-file-text"></i> AI创作文字</h6>
+                    <div style="white-space: pre-wrap; line-height: 1.8;">{{ result.content }}</div>
+                </div>
+                {% endif %}
+                {% if result.image %}
+                <div class="result-card text-center">
+                    <h6 class="fw-bold mb-3"><i class="bi bi-image"></i> AI生成图片</h6>
+                    <img src="{{ result.image }}" alt="AI生成" class="img-fluid rounded" style="max-height: 400px;">
+                </div>
+                {% endif %}
+            </div>
+            {% else %}
+            <div class="ai-card">
+                <div class="alert alert-warning">
+                    <i class="bi bi-exclamation-triangle"></i> {{ result.error }}
+                </div>
+            </div>
+            {% endif %}
+            {% else %}
+            <div class="ai-card text-center py-5">
+                <i class="bi bi-gear-wide-connected" style="font-size: 4rem; color: var(--primary); opacity: 0.2;"></i>
+                <p class="mt-3 text-muted">选择创作模式并提交后，AI组合创作结果将显示在这里</p>
+                <div class="row mt-4 justify-content-center">
+                    <div class="col-md-8">
+                        <div class="result-card">
+                            <h6 class="fw-bold mb-3">创作流程</h6>
+                            <div class="d-flex align-items-center justify-content-center gap-2 flex-wrap">
+                                <span class="badge bg-primary"><i class="bi bi-eye"></i> 图像识别</span>
+                                <i class="bi bi-arrow-right text-muted"></i>
+                                <span class="badge bg-success"><i class="bi bi-pencil"></i> AI写作</span>
+                                <i class="bi bi-arrow-right text-muted"></i>
+                                <span class="badge bg-danger"><i class="bi bi-palette"></i> AI绘画</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function toggleMode(mode) {
+    var imageMode = document.getElementById('imageMode');
+    var imageStyleSelect = document.getElementById('imageStyleSelect');
+    if (mode === 'image_to_text') {
+        imageMode.classList.remove('d-none');
+        imageStyleSelect.classList.add('d-none');
+    } else {
+        imageMode.classList.add('d-none');
+        imageStyleSelect.classList.remove('d-none');
+    }
+}
+</script>
+{% endblock %}

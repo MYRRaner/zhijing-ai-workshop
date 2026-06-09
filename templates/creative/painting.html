@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+{% block title %}AI绘画 - 智境·AI{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <h1><i class="bi bi-palette"></i> AI绘画</h1>
+        <p>描述你的想象，AI为你生成精美图片</p>
+    </div>
+</div>
+<div class="container ai-page">
+    <div class="row g-4">
+        <div class="col-lg-5">
+            <div class="ai-card">
+                <h2><i class="bi bi-brush"></i> 绘画提示</h2>
+                <form method="post" id="paintingForm">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">画面描述</label>
+                        <textarea name="prompt" class="form-control" rows="4" placeholder="请描述你想生成的画面，越详细越好..." required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">绘画风格</label>
+                        <div class="style-selector">
+                            <input type="radio" name="style" value="anime" class="btn-check" id="style-anime" checked>
+                            <label class="btn btn-outline-primary btn-sm" for="style-anime">动漫</label>
+                            <input type="radio" name="style" value="realistic" class="btn-check" id="style-realistic">
+                            <label class="btn btn-outline-primary btn-sm" for="style-realistic">写实</label>
+                            <input type="radio" name="style" value="watercolor" class="btn-check" id="style-watercolor">
+                            <label class="btn btn-outline-primary btn-sm" for="style-watercolor">水彩</label>
+                            <input type="radio" name="style" value="oil" class="btn-check" id="style-oil">
+                            <label class="btn btn-outline-primary btn-sm" for="style-oil">油画</label>
+                            <input type="radio" name="style" value="cyberpunk" class="btn-check" id="style-cyberpunk">
+                            <label class="btn btn-outline-primary btn-sm" for="style-cyberpunk">赛博朋克</label>
+                            <input type="radio" name="style" value="chinese" class="btn-check" id="style-chinese">
+                            <label class="btn btn-outline-primary btn-sm" for="style-chinese">国画</label>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-ai w-100 py-2">
+                        <i class="bi bi-palette2"></i> 开始生成
+                    </button>
+                </form>
+            </div>
+        </div>
+        <div class="col-lg-7">
+            {% if result %}
+            {% if result.success %}
+            <div class="ai-card">
+                <h2><i class="bi bi-image"></i> AI生成结果
+                    {% if result.mock %}
+                    <span class="badge bg-warning text-dark ms-2">演示模式</span>
+                    {% endif %}
+                </h2>
+                <div class="result-card text-center">
+                    {% if result.image %}
+                    <img src="{{ result.image }}" alt="AI生成图片" class="img-fluid rounded" style="max-height: 500px;">
+                    {% endif %}
+                </div>
+                <div class="mt-3 d-flex gap-2">
+                    <button class="btn btn-outline-primary btn-sm" onclick="downloadImage()">
+                        <i class="bi bi-download"></i> 下载图片
+                    </button>
+                </div>
+            </div>
+            {% else %}
+            <div class="ai-card">
+                <div class="alert alert-warning">
+                    <i class="bi bi-exclamation-triangle"></i> {{ result.error }}
+                </div>
+            </div>
+            {% endif %}
+            {% else %}
+            <div class="ai-card text-center py-5">
+                <i class="bi bi-easel" style="font-size: 4rem; color: var(--primary); opacity: 0.2;"></i>
+                <p class="mt-3 text-muted">输入绘画提示后，AI生成的图片将显示在这里</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function downloadImage() {
+    var img = document.querySelector('.result-card img');
+    if (img) {
+        var a = document.createElement('a');
+        a.href = img.src;
+        a.download = 'ai_generated.png';
+        a.click();
+    }
+}
+</script>
+{% endblock %}

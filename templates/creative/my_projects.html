@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block title %}我的项目 - 智境·AI{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <h1><i class="bi bi-folder"></i> 我的项目</h1>
+        <p>管理你的所有AI创作项目</p>
+    </div>
+</div>
+<div class="container ai-page">
+    {% if projects %}
+    <div class="row g-4">
+        {% for project in projects %}
+        <div class="col-md-6 col-lg-4">
+            <div class="ai-card h-100">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <span class="badge badge-ai badge-{{ project.project_type }}">{{ project.get_project_type_display }}</span>
+                    <small class="text-muted">{{ project.created_at|date:"m-d H:i" }}</small>
+                </div>
+                <h6 class="fw-bold">{{ project.title }}</h6>
+                <p class="text-muted small mb-3">{{ project.description|default:"暂无描述"|truncatechars:60 }}</p>
+                <div class="d-flex gap-2">
+                    <a href="{% url 'gallery:publish' %}?project_id={{ project.id }}" class="btn btn-sm btn-outline-primary">
+                        <i class="bi bi-share"></i> 发布到画廊
+                    </a>
+                    <a href="{% url 'creative:delete_project' project.id %}" class="btn btn-sm btn-outline-danger"
+                       onclick="return confirm('确定要删除这个项目吗？')">
+                        <i class="bi bi-trash"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="ai-card text-center py-5">
+        <i class="bi bi-folder2-open" style="font-size: 4rem; color: var(--primary); opacity: 0.2;"></i>
+        <p class="mt-3 text-muted">还没有创作项目，去创意工坊开始创作吧！</p>
+        <a href="{% url 'creative:identify' %}" class="btn btn-ai mt-2">
+            <i class="bi bi-rocket-takeoff"></i> 开始创作
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

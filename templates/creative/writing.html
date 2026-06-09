@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+
+{% block title %}AI写作 - 智境·AI{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <h1><i class="bi bi-pencil"></i> AI写作</h1>
+        <p>输入创意提示，AI为你生成多种风格的文字内容</p>
+    </div>
+</div>
+<div class="container ai-page">
+    <div class="row g-4">
+        <div class="col-lg-5">
+            <div class="ai-card">
+                <h2><i class="bi bi-lightbulb"></i> 创作提示</h2>
+                <form method="post" id="writingForm">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">写作主题</label>
+                        <textarea name="prompt" class="form-control" rows="4" placeholder="请输入你想让AI写作的主题或内容..." required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">写作风格</label>
+                        <div class="style-selector">
+                            <input type="radio" name="style" value="general" class="btn-check" id="style-general" checked>
+                            <label class="btn btn-outline-primary btn-sm" for="style-general">通用</label>
+                            <input type="radio" name="style" value="literary" class="btn-check" id="style-literary">
+                            <label class="btn btn-outline-primary btn-sm" for="style-literary">文学</label>
+                            <input type="radio" name="style" value="technical" class="btn-check" id="style-technical">
+                            <label class="btn btn-outline-primary btn-sm" for="style-technical">技术</label>
+                            <input type="radio" name="style" value="humorous" class="btn-check" id="style-humorous">
+                            <label class="btn btn-outline-primary btn-sm" for="style-humorous">幽默</label>
+                            <input type="radio" name="style" value="poetry" class="btn-check" id="style-poetry">
+                            <label class="btn btn-outline-primary btn-sm" for="style-poetry">诗歌</label>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-ai w-100 py-2">
+                        <i class="bi bi-pencil-square"></i> 开始写作
+                    </button>
+                </form>
+            </div>
+        </div>
+        <div class="col-lg-7">
+            {% if result %}
+            {% if result.success %}
+            <div class="ai-card">
+                <h2><i class="bi bi-file-text"></i> AI创作结果
+                    {% if result.mock %}
+                    <span class="badge bg-warning text-dark ms-2">演示模式</span>
+                    {% endif %}
+                </h2>
+                <div class="result-card">
+                    <div id="writingResult" style="white-space: pre-wrap; line-height: 1.8; font-size: 1.05rem;">{{ result.content }}</div>
+                </div>
+                <div class="mt-3 d-flex gap-2">
+                    <button class="btn btn-outline-primary btn-sm" onclick="copyText()">
+                        <i class="bi bi-clipboard"></i> 复制文本
+                    </button>
+                </div>
+            </div>
+            {% else %}
+            <div class="ai-card">
+                <div class="alert alert-warning">
+                    <i class="bi bi-exclamation-triangle"></i> {{ result.error }}
+                </div>
+            </div>
+            {% endif %}
+            {% else %}
+            <div class="ai-card text-center py-5">
+                <i class="bi bi-pencil-square" style="font-size: 4rem; color: var(--primary); opacity: 0.2;"></i>
+                <p class="mt-3 text-muted">输入创作提示后，AI写作结果将显示在这里</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function copyText() {
+    var text = document.getElementById('writingResult').innerText;
+    navigator.clipboard.writeText(text).then(function() {
+        alert('已复制到剪贴板！');
+    });
+}
+</script>
+{% endblock %}

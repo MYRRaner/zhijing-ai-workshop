@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ artwork.title }} - 智境·AI{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <h1><i class="bi bi-image"></i> {{ artwork.title }}</h1>
+        <p>by {{ artwork.user.username }} | {{ artwork.created_at|date:"Y-m-d H:i" }}</p>
+    </div>
+</div>
+<div class="container ai-page">
+    <div class="row g-4">
+        <div class="col-lg-7">
+            <div class="ai-card">
+                <img src="{{ artwork.image.url }}" alt="{{ artwork.title }}" class="img-fluid rounded mb-3">
+                <div class="d-flex gap-3 align-items-center">
+                    <button class="btn {% if is_liked %}btn-danger{% else %}btn-outline-danger{% endif %} btn-sm" id="likeBtn"
+                            onclick="likeArtwork({{ artwork.id }})">
+                        <i class="bi bi-heart{% if not is_liked %}-fill{% endif %}"></i>
+                        <span id="likeCount">{{ artwork.likes }}</span>
+                    </button>
+                    <span class="text-muted"><i class="bi bi-eye"></i> {{ artwork.views }} 浏览</span>
+                    <span class="badge badge-ai badge-{{ artwork.ai_type }}">{{ artwork.get_ai_type_display }}</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-5">
+            <div class="ai-card mb-4">
+                <h2><i class="bi bi-info-circle"></i> 作品详情</h2>
+                <p>{{ artwork.description|default:"暂无描述" }}</p>
+                {% if artwork.prompt %}
+                <div class="result-card mt-3">
+                    <h6 class="fw-bold"><i class="bi bi-code-slash"></i> AI提示词</h6>
+                    <p class="small mb-0">{{ artwork.prompt|truncatechars:200 }}</p>
+                </div>
+                {% endif %}
+            </div>
+            <div class="ai-card">
+                <h2><i class="bi bi-chat-dots"></i> 评论 ({{ comments|length }})</h2>
+                {% if user.is_authenticated %}
+                <form method="post" action="{% url 'gallery:comment' artwork.id %}" class="mb-3">
+                    {% csrf_token %}
+                    <div class="input-group">
+                        <input type="text" name="content" class="form-control" placeholder="写下你的评论..." required>
+                        <button type="submit" class="btn btn-ai"><i class="bi bi-send"></i></button>
+                    </div>
+                </form>
+                {% else %}
+                <p class="text-muted small mb-3"><a href="{% url 'accounts:login' %}">登录</a>后可以评论</p>
+                {% endif %}
+                {% for comment in comments %}
+                <div class="border-bottom pb-2 mb-2">
+                    <strong>{{ comment.user.username }}</strong>
+                    <small class="text-muted ms-2">{{ comment.created_at|date:"m-d H:i" }}</small>
+                    <p class="mb-0 mt-1">{{ comment.content }}</p>
+                </div>
+                {% empty %}
+                <p class="text-muted small">暂无评论</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function likeArtwork(artworkId) {
+    fetch(`/gallery/${artworkId}/like/`, {
+        method: 'POST',
+        headers: {'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value}
+    })
+    .then(resp => resp.json())
+    .then(data => {
+        var btn = document.getElementById('likeBtn');
+        var count = document.getElementById('likeCount');
+        count.textContent = data.likes;
+        if (data.liked) {
+            btn.className = 'btn btn-danger btn-sm';
+        } else {
+            btn.className = 'btn btn-outline-danger btn-sm';
+        }
+    });
+}
+</script>
+{% endblock %}

@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# Render 部署构建脚本
+
+set -o errexit
+
+# 安装依赖
+pip install -r requirements.txt
+
+# 收集静态文件
+python manage.py collectstatic --noinput
+
+# 执行数据库迁移
+python manage.py migrate

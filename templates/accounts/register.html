@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %}注册 - 智境·AI{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <h1><i class="bi bi-person-plus"></i> 注册</h1>
+        <p>创建智境账户，探索AI创作的无限可能</p>
+    </div>
+</div>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="ai-card">
+                <form method="post">
+                    {% csrf_token %}
+                    {% if form.errors %}
+                    <div class="alert alert-danger">
+                        {% for field, errors in form.errors.items %}
+                            {% for error in errors %}
+                            <div><i class="bi bi-exclamation-triangle"></i> {{ error }}</div>
+                            {% endfor %}
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">用户名</label>
+                        {{ form.username }}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">邮箱</label>
+                        {{ form.email }}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">密码</label>
+                        {{ form.password1 }}
+                        <div class="form-text">密码至少8位，不能全是数字</div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">确认密码</label>
+                        {{ form.password2 }}
+                    </div>
+                    <button type="submit" class="btn btn-ai w-100 py-2">
+                        <i class="bi bi-person-plus"></i> 注册
+                    </button>
+                </form>
+                <div class="text-center mt-3">
+                    <span class="text-muted">已有账户？</span>
+                    <a href="{% url 'accounts:login' %}" class="text-decoration-none" style="color: var(--primary);">去登录</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

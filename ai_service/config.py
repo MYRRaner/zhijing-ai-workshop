@@ -1,0 +1,6 @@
+import os
+
+ZHIPU_API_KEY = os.environ.get('ZHIPU_API_KEY', 'b27ae405d07b4e52911b7ca6f3e2df25.TRe5ef7jT8RoHSQX')
+
+AI_SERVICE_HOST = '0.0.0.0'
+AI_SERVICE_PORT = 5001

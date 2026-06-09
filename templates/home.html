@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}智境·AI创意工坊 - 释放你的创造力{% endblock %}
+
+{% block content %}
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-7">
+                <h1 class="hero-title">智境·AI创意工坊</h1>
+                <p class="hero-subtitle">融合计算机视觉、大语言模型与AIGC技术，打造你的AI创意空间。识物、写作、绘画，一站式的智能创作体验。</p>
+                <div class="d-flex gap-3 flex-wrap">
+                    <a href="{% url 'creative:identify' %}" class="btn-primary-custom btn">
+                        <i class="bi bi-rocket-takeoff"></i> 开始创作
+                    </a>
+                    <a href="{% url 'gallery:list' %}" class="btn-secondary-custom btn">
+                        <i class="bi bi-images"></i> 浏览作品
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-5 d-none d-lg-block">
+                <div class="text-center" style="font-size: 8rem; opacity: 0.3;">
+                    <i class="bi bi-stars"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container">
+        <h2 class="section-title">AI创意工具</h2>
+        <p class="section-subtitle">四大核心能力，赋能你的创作灵感</p>
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-3">
+                <a href="{% url 'creative:identify' %}" class="text-decoration-none">
+                    <div class="feature-card">
+                        <div class="feature-icon cv">
+                            <i class="bi bi-eye-fill text-white"></i>
+                        </div>
+                        <h5 class="fw-bold mb-2">智能识物</h5>
+                        <p class="text-muted small">上传图片，AI自动分析图像内容：颜色提取、人脸检测、场景识别、清晰度评估</p>
+                        <span class="badge badge-ai badge-cv">OpenCV</span>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <a href="{% url 'creative:writing' %}" class="text-decoration-none">
+                    <div class="feature-card">
+                        <div class="feature-icon llm">
+                            <i class="bi bi-pencil-fill text-white"></i>
+                        </div>
+                        <h5 class="fw-bold mb-2">AI写作</h5>
+                        <p class="text-muted small">输入创意提示，AI为你生成多种风格的文字内容：文学、技术、幽默、诗歌</p>
+                        <span class="badge badge-ai badge-llm">GLM-4</span>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <a href="{% url 'creative:painting' %}" class="text-decoration-none">
+                    <div class="feature-card">
+                        <div class="feature-icon aigc">
+                            <i class="bi bi-palette-fill text-white"></i>
+                        </div>
+                        <h5 class="fw-bold mb-2">AI绘画</h5>
+                        <p class="text-muted small">描述你的想象，AI为你生成精美图片：动漫、写实、水彩、油画、赛博朋克</p>
+                        <span class="badge badge-ai badge-aigc">CogView</span>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <a href="{% url 'creative:workshop' %}" class="text-decoration-none">
+                    <div class="feature-card">
+                        <div class="feature-icon workshop">
+                            <i class="bi bi-gear-wide-connected text-white"></i>
+                        </div>
+                        <h5 class="fw-bold mb-2">创意工坊</h5>
+                        <p class="text-muted small">组合多种AI能力：图片识物+AI写作、文字描述+AI绘画，激发无限创意</p>
+                        <span class="badge badge-ai badge-workshop">Multi-AI</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5 bg-white">
+    <div class="container">
+        <h2 class="section-title">技术架构</h2>
+        <p class="section-subtitle">Flask + Django 微服务架构，AI能力独立部署</p>
+        <div class="row g-4 justify-content-center">
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="mb-3" style="font-size: 2.5rem;">
+                        <i class="bi bi-hdd-stack text-primary"></i>
+                    </div>
+                    <h5 class="fw-bold">Django 主应用</h5>
+                    <p class="text-muted small">用户认证、项目管理、作品画廊、社区互动</p>
+                    <div class="mt-2">
+                        <span class="badge bg-primary">ORM</span>
+                        <span class="badge bg-primary">Auth</span>
+                        <span class="badge bg-primary">Templates</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="mb-3" style="font-size: 2.5rem;">
+                        <i class="bi bi-cpu text-success"></i>
+                    </div>
+                    <h5 class="fw-bold">Flask AI服务</h5>
+                    <p class="text-muted small">计算机视觉、大模型推理、AIGC生成、API网关</p>
+                    <div class="mt-2">
+                        <span class="badge bg-success">OpenCV</span>
+                        <span class="badge bg-success">ZhipuAI</span>
+                        <span class="badge bg-success">CogView</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="mb-3" style="font-size: 2.5rem;">
+                        <i class="bi bi-diagram-3 text-warning"></i>
+                    </div>
+                    <h5 class="fw-bold">微服务通信</h5>
+                    <p class="text-muted small">RESTful API、JSON数据交换、异步请求处理</p>
+                    <div class="mt-2">
+                        <span class="badge bg-warning text-dark">REST API</span>
+                        <span class="badge bg-warning text-dark">JSON</span>
+                        <span class="badge bg-warning text-dark">CORS</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

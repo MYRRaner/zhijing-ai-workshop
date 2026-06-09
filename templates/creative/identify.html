@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+
+{% block title %}智能识物 - 智境·AI{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <h1><i class="bi bi-eye"></i> 智能识物</h1>
+        <p>上传图片，AI为你分析图像内容</p>
+    </div>
+</div>
+<div class="container ai-page">
+    <div class="row g-4">
+        <div class="col-lg-5">
+            <div class="ai-card">
+                <h2><i class="bi bi-cloud-upload"></i> 上传图片</h2>
+                <form method="post" enctype="multipart/form-data" id="identifyForm">
+                    {% csrf_token %}
+                    <div class="upload-zone mb-3" id="uploadZone" onclick="document.getElementById('imageInput').click()">
+                        <i class="bi bi-image" style="font-size: 3rem; color: var(--primary); opacity: 0.5;"></i>
+                        <p class="mt-2 text-muted">点击或拖拽图片到此处上传</p>
+                        <p class="small text-muted">支持 JPG、PNG 格式</p>
+                    </div>
+                    <input type="file" name="image" id="imageInput" accept="image/*" class="d-none" onchange="previewImage(this)">
+                    <div id="previewContainer" class="mb-3 d-none">
+                        <img id="previewImg" class="image-preview" alt="预览">
+                    </div>
+                    <button type="submit" class="btn btn-ai w-100 py-2" id="analyzeBtn">
+                        <i class="bi bi-search"></i> 开始分析
+                    </button>
+                </form>
+            </div>
+        </div>
+        <div class="col-lg-7">
+            {% if result %}
+            {% if result.success %}
+            <div class="ai-card">
+                <h2><i class="bi bi-clipboard-data"></i> 分析结果</h2>
+                {% with data=result.data %}
+                <div class="result-card mb-3">
+                    <h6 class="fw-bold"><i class="bi bi-info-circle"></i> 场景信息</h6>
+                    <p>{{ data.description }}</p>
+                    <div class="row mt-2">
+                        <div class="col-6">
+                            <small class="text-muted">场景类型</small>
+                            <p class="fw-bold">{{ data.scene.type }}</p>
+                        </div>
+                        <div class="col-6">
+                            <small class="text-muted">画面亮度</small>
+                            <p class="fw-bold">{{ data.brightness }}</p>
+                        </div>
+                        <div class="col-6">
+                            <small class="text-muted">清晰度</small>
+                            <p class="fw-bold">{{ data.scene.sharpness }}</p>
+                        </div>
+                        <div class="col-6">
+                            <small class="text-muted">人脸数量</small>
+                            <p class="fw-bold">{{ data.scene.face_count }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="result-card mb-3">
+                    <h6 class="fw-bold"><i class="bi bi-palette"></i> 主要颜色</h6>
+                    <div class="d-flex flex-wrap align-items-center gap-2">
+                        {% for color in data.dominant_colors %}
+                        <div class="text-center">
+                            <div class="color-swatch" style="background: {{ color.hex }};"></div>
+                            <small class="d-block mt-1">{{ color.hex }}</small>
+                            <small class="text-muted">{{ color.percentage }}%</small>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="result-card">
+                    <h6 class="fw-bold"><i class="bi bi-arrows-fullscreen"></i> 图片尺寸</h6>
+                    <p>{{ data.dimensions.width }} x {{ data.dimensions.height }} 像素</p>
+                </div>
+                {% endwith %}
+            </div>
+            {% else %}
+            <div class="ai-card">
+                <div class="alert alert-warning">
+                    <i class="bi bi-exclamation-triangle"></i> {{ result.error }}
+                </div>
+            </div>
+            {% endif %}
+            {% else %}
+            <div class="ai-card text-center py-5">
+                <i class="bi bi-eye-slash" style="font-size: 4rem; color: var(--primary); opacity: 0.2;"></i>
+                <p class="mt-3 text-muted">上传图片后，AI分析结果将显示在这里</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function previewImage(input) {
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('previewImg').src = e.target.result;
+            document.getElementById('previewContainer').classList.remove('d-none');
+            document.getElementById('uploadZone').classList.add('d-none');
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+</script>
+{% endblock %}
